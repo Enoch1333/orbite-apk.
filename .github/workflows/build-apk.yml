@@ -6,6 +6,8 @@
 # Note : l'étape « Installer les librairies Capacitor » (npm ci) est essentielle —
 # le zip ne contient pas node_modules, et le projet Android en a besoin
 # pour résoudre le module :capacitor-android (échec du run #1, 2026-11-13).
+# Java 21 obligatoire : Capacitor 8 compile en « source release 21 »
+# (le run #2 a échoué avec Java 17 : « invalid source release: 21 »).
 
 name: Build APK (Orbite)
 
@@ -31,11 +33,11 @@ jobs:
         working-directory: projet/orbite
         run: npm ci
 
-      - name: Installer Java 17
+      - name: Installer Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "21"
 
       - name: Compiler l'APK de test
         working-directory: projet/orbite/android
