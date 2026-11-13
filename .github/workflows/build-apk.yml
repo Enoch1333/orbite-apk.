@@ -1,0 +1,36 @@
+# Orbite — compilation APK gratuite sur GitHub Actions
+# Usage : mets ce fichier dans ton dépôt GitHub à l'emplacement
+# .github/workflows/build-apk.yml, avec orbite-app.zip à la racine du dépôt.
+# Ensuite : onglet Actions → "Build APK (Orbite)" → Run workflow.
+# L'APK de test (app-debug.apk) se télécharge dans "Artifacts" quand le job est vert.
+
+name: Build APK (Orbite)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Dézipper le projet
+        run: unzip orbite-app.zip -d projet
+
+      - name: Installer Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Compiler l'APK de test
+        working-directory: projet/orbite/android
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Publier l'APK en téléchargement
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbite-apk
+          path: projet/orbite/android/app/build/outputs/apk/debug/app-debug.apk
